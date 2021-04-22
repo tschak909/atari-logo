@@ -1,0 +1,114 @@
+mads 2.1.1
+Source: atari-logo.s
+     1 					;; Atari Logo with rainbow Fuji
+     2 					;; Author: Thom Cherryhomes <thom.cherryhomes@gmail.com>
+     3
+     4 = 00F0			C0	=	$F0
+     5 = 00F1			C1	=	$F1
+     6 = 00F2			C2	=	$F2
+     7 = 00F3			C3	=	$F3
+     8 = 00F4			DL	=	$F4
+     9 = 0FF5			DH	=	$Ff5
+    10 					
+    11 = 0230			SDLSTL	=	$0230
+    12 = 0231			SDLSTH	=	$0231
+    13 					
+    14 					
+    15 					ORG	$2200
+    16
+    17 				START:
+    18 					;; CLEAR KEYBOARD BUFFER
+    19 FFFF> 2200-2258> A9 FF		LDA	#$FF
+    20 2202 8D FC 02			STA	$02FC
+    21 					
+    22 					;; SAVE DISPLAY LIST
+    23 					
+    24 2205 AD 30 02			LDA	SDLSTL
+    25 2208 85 F4			STA	DL
+    26 220A AD 31 02			LDA	SDLSTH
+    27 220D 8D F5 0F			STA	DH
+    28
+    29 					;; SAVE COLOR REGISTERS
+    30
+    31 2210 A2 04			LDX	#$04
+    32 2212 BD C4 02		SL1:	LDA	$02C4,X
+    33 2215 95 F0			STA	C0,X
+    34 2217 CA				DEX
+    35 2218 10 F8			BPL	SL1
+    36
+    37 					;; SET COLOR REGISTERS
+    38
+    39 221A A9 0E			LDA	#$0E
+    40 221C 8D C4 02			STA	$02C4
+    41 221F 8D C5 02			STA	$02C5
+    42 2222 8D C6 02			STA	$02C6
+    43 2225 8D C7 02			STA	$02C7
+    44 					
+    45 					;; SET DISPLAY LIST
+    46
+    47 2228 A9 00			LDA	#$00
+    48 222A 8D 30 02			STA	SDLSTL
+    49 222D A9 29			LDA	#$29
+    50 222F 8D 31 02			STA	SDLSTH
+    51
+    52 2232 A2 FF			LDX	#$FF
+    53 2234 8E FC 02			STX	$02FC
+    54 					
+    55 					;; Main loop
+    56
+    57 2237 8E 16 D0		LOOP:	STX	$D016
+    58 223A 8E 0A D4			STX	$D40A
+    59 223D CA				DEX
+    60 223E AD FC 02			LDA	$02FC
+    61 2241 30 F4			BMI	LOOP
+    62 					
+    63 					;; RESTORE DISPLAY LIST
+    64
+    65 2243 A5 F4			LDA	DL
+    66 2245 8D 30 02			STA	SDLSTL
+    67 2248 AD F5 0F			LDA	DH
+    68 224B 8D 31 02			STA	SDLSTH
+    69
+    70 					;; RESTORE COLOR REGISTERS
+    71
+    72 224E A2 04			LDX	#$04
+    73 2250 B5 F0		SL2:	LDA	C0,X
+    74 2252 9D C4 02			STA	$02C4,X
+    75 2255 CA				DEX
+    76 2256 10 F8			BPL	SL2
+    77 					
+    78 2258 60				RTS
+    79
+    80 2259				ORG	$2900
+    81
+    82 2900			DLST:
+    83 2900-29C9> 70 70 70		.BYTE	$70,$70,$70
+    84 2903 4E 50 31			.BYTE   $4E,$50,$31
+    85 2906 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    86 2910 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    87 291A 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    88 2924 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    89 292E 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    90 2938 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    91 2942 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    92 294C 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    93 2956 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    94 2960 0E 0E 0E			.BYTE   $0E,$0E,$0E
+    95 2963 4E 00 40			.BYTE	$4E,$00,$40
+    96 2966 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    97 2970 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    98 297A 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+    99 2984 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+   100 298E 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+   101 2998 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+   102 29A2 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+   103 29AC 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+   104 29B6 0E 0E 0E 0E 0E 0E + 	.BYTE   $0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E
+   105 29C0 0E 0E 0E 0E 0E 0E + 	.BYTE	$0E,$0E,$0E,$0E,$0E,$0E,$0E
+   106 29C7 41 00 29			.BYTE	$41,$00,$29
+   107 					
+   108 29CA				ORG 	$3150
+   109
+   110 3150-4F4F> 00 00 00 00 + 	INS	"atari.mic"
+   111
+   112 02E0-02E1> 00 22			RUN	START
